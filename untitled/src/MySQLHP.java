@@ -26,26 +26,26 @@ public class MySQLHP {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-            //Creates health stat
+            //MySQL Creates player stats
             insertPlayerStats(connection, 20, 20, 20);
 
-            // Read
+            // MySQL Read
             List<Player> stats = getAllStats(connection);
             for (Player stat : stats) {
                 System.out.println(stat);
             }
 
 
-            //Updates health stat
+            //MySQL Updates health stat
             updateStats(connection, 10, 20);
 
-            // Read again
+            //MySQL Read again
             stats = getAllStats(connection);
             for (Player stat : stats) {
                 System.out.println(stat);
             }
 
-            // Delete
+            //MySQL Delete
             deleteHealth(connection, 20);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -95,33 +95,33 @@ public class MySQLHP {
             }
         }
         try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
-            // Access the database and collection
+            // MongoDB Access the database and collection
             MongoDatabase database = mongoClient.getDatabase("Player");
             MongoCollection<Document> collection = database.getCollection("PStats");
 
-            // Insert a document
+            // MongoDB Insert stats
             Document newPlayer = new Document("Ammo", 20)
                     .append("Health", 20)
                     .append("Speed", 20);
             collection.insertOne(newPlayer);
 
-            // Read
+            // MongoDB Read stats
             FindIterable<Document> PStats = collection.find();
             for (Document player : PStats) {
                 System.out.println(player.toJson());
 
             }
-            // Update
+            // MongoDB Update health, lowers HP
             Document updatedPlayer = new Document("$set", new Document("Health", 10));
             collection.updateOne(new Document("Health", 20), updatedPlayer);
 
-            // Read again
+            // MongoDB Read stats again after updating HP
             PStats = collection.find();
             for (Document player : PStats) {
                 System.out.println(player.toJson());
             }
-            // Delete
-            collection.deleteOne(new Document("Health", 20));
+            // MongoDB Delete
+            collection.deleteOne(new Document("Speed", 20));
         }
 
     }

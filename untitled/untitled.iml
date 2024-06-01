@@ -17,5 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="mysql.connector.j" level="project" />
+    <orderEntry type="library" name="mongodb.driver.sync" level="project" />
   </component>
 </module>

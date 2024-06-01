@@ -6,6 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.FindIterable;
+import org.bson.Document;
 
 public class MySQLHP {
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/STATS";
@@ -21,7 +27,7 @@ public class MySQLHP {
         try {
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
             //Creates health stat
-            insertPlayerStats(connection, 20, 20,20);
+            insertPlayerStats(connection, 20, 20, 20);
 
             // Read
             List<Player> stats = getAllStats(connection);
@@ -31,7 +37,7 @@ public class MySQLHP {
 
 
             //Updates health stat
-            updateStats(connection, 10,20);
+            updateStats(connection, 10, 20);
 
             // Read again
             stats = getAllStats(connection);
@@ -72,7 +78,7 @@ public class MySQLHP {
                 int ammo = resultSet.getInt("ammo");
                 int health = resultSet.getInt("health");
                 int speed = resultSet.getInt("speed");
-                stats.add(new Player(ammo,health,speed));
+                stats.add(new Player(ammo, health, speed));
             }
         }
         return stats;
@@ -88,5 +94,35 @@ public class MySQLHP {
             {
             }
         }
+        try (MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017")) {
+            // Access the database and collection
+            MongoDatabase database = mongoClient.getDatabase("Player");
+            MongoCollection<Document> collection = database.getCollection("PStats");
+
+            // Insert a document
+            Document newPlayer = new Document("Ammo", 20)
+                    .append("Health", 20)
+                    .append("Speed", 20);
+            collection.insertOne(newPlayer);
+
+            // Read
+            FindIterable<Document> PStats = collection.find();
+            for (Document player : PStats) {
+                System.out.println(player.toJson());
+
+            }
+            // Update
+            Document updatedPlayer = new Document("$set", new Document("Health", 10));
+            collection.updateOne(new Document("Health", 20), updatedPlayer);
+
+            // Read again
+            PStats = collection.find();
+            for (Document player : PStats) {
+                System.out.println(player.toJson());
+            }
+            // Delete
+            collection.deleteOne(new Document("Health", 20));
+        }
+
     }
 }

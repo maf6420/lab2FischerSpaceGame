@@ -14,7 +14,7 @@ import com.mongodb.client.FindIterable;
 import org.bson.Document;
 
 public class MySQLHP {
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/STATS";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/stats";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "IST888IST888";
 
@@ -52,10 +52,10 @@ public class MySQLHP {
         }
     }
 
-    private static void deleteHealth(Connection connection, int speed) throws SQLException {
-        String sql = "DELETE FROM PlayerStats WHERE speed = ?";
+    private static void deleteHealth(Connection connection, int health) throws SQLException {
+        String sql = "DELETE FROM PlayerStats WHERE health = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, speed);
+            preparedStatement.setInt(1, health);
             preparedStatement.executeUpdate();
         }
     }
@@ -121,7 +121,7 @@ public class MySQLHP {
                 System.out.println(player.toJson());
             }
             // MongoDB Delete
-            collection.deleteOne(new Document("Speed", 20));
+            collection.deleteOne(new Document("Health", 20));
         }
 
     }
